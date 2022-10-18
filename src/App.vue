@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <nav>
-      董志斌
+      董志斌2
       徐康康
     </nav>
   </div>
