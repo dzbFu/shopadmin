@@ -2,6 +2,7 @@
   <div id="app">
     <nav>
       董志斌
+      徐康康
     </nav>
   </div>
 </template>
