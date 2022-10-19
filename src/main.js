@@ -18,7 +18,8 @@ Vue.use(ElementUI);
 // 判断有没有token
 router.beforeEach((to,from,next) =>{
   if(to.path  == '/login') return next()
-  next()
+  if(!sessionStorage.token) return next('/login')
+   next()
 })
 new Vue({
   router,
