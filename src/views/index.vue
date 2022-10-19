@@ -2,7 +2,7 @@
   <div class="index-box">
     <div class="sec-left">
       <el-menu
-        default-active="1-4-1"
+        default-active=""
         class="el-menu-vertical-demo"
         @open="handleOpen"
         @close="handleClose"
@@ -10,33 +10,27 @@
         background-color="#304156"
         :collapse-transition="true"
         text-color="#bfcbd9"
+        router
       >
-        <el-submenu index="1">
+        <el-menu-item index="">
+          <i class="el-icon-setting"></i>
+          <span slot="title">首页</span>
+        </el-menu-item>
+        <el-submenu
+          v-for="(item) in menus"
+          :index="item.name"
+          :key="item.id"
+          background-color="#1f2d3d"
+        >
           <template slot="title">
             <i class="el-icon-location"></i>
-            <span slot="title">导航一</span>
+            <span slot="title">{{item.title}}</span>
           </template>
-          <el-menu-item index="1-1">选项1</el-menu-item>
-          <el-menu-item index="1-2">选项2</el-menu-item>
-          <el-menu-item index="1-3">选项3</el-menu-item>
-        </el-submenu>
-        <el-submenu index="2">
-          <template slot="title">
-            <i class="el-icon-location"></i>
-            <span slot="title">导航一</span>
-          </template>
-          <el-menu-item index="1-1">选项1</el-menu-item>
-          <el-menu-item index="1-2">选项2</el-menu-item>
-          <el-menu-item index="1-3">选项3</el-menu-item>
-        </el-submenu>
-        <el-submenu index="3">
-          <template slot="title">
-            <i class="el-icon-location"></i>
-            <span slot="title">导航一</span>
-          </template>
-          <el-menu-item index="1-1">选项1</el-menu-item>
-          <el-menu-item index="1-2">选项2</el-menu-item>
-          <el-menu-item index="1-3">选项3</el-menu-item>
+          <el-menu-item
+            v-for="(item) in item.children"
+            :index="item.name"
+            :key="item.id"
+          >{{item.title}}</el-menu-item>
         </el-submenu>
       </el-menu>
     </div>
@@ -46,29 +40,41 @@
 export default {
   data() {
     return {
-      isCollapse: true,     //侧边折叠状态
-        userphoto: "",     //用户头像
-      username:''           //用户名
+      isCollapse: true, //侧边折叠状态
+      userphoto: "", //用户头像
+      username: "", //用户名
+      menus: [] //用户权限列表
     };
   },
   created() {
     //获取用户路由权限信息
     this.$api.home.menu().then(res => {
-        this.userphoto = res.data.data.icon
-        this.username = res.data.data.username
-        console.log(res.data.data);
+      this.userphoto = res.data.data.icon;
+      this.username = res.data.data.username;
+      console.log(res.data.data.menus);
+      //用户权限数据重组
+      let menus = res.data.data.menus;
+      for (let i = 0; i < menus.length; i++) {
+        if (menus[i].parentId == 0) {
+          this.menus.push(menus[i]);
+          this.menus[this.menus.length - 1].children = [];
+        } else {
+            // menus[i].name=this.menus[this.menus.length - 1].name+'/'+menus[i].name
+          this.menus[this.menus.length - 1].children.push(menus[i]);
+        }
+      }
+      console.log(this.menus);
     });
-    },
-  
+  },
+
   methods: {
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath);
-      }
-    
-    },
+    }
+  }
 };
 </script>
 <style lang="less" scoped>
@@ -84,6 +90,15 @@ export default {
   height: 100vh;
   .sec-left {
     position: fixed;
+    overflow: scroll;
+    overflow-x: hidden;
+    height: 100vh;
   }
+  .sec-left::-webkit-scrollbar {
+    display: none;
+  }
+  //   ::v-deep .el-menu-item{
+  //     background-color: #1f2d3d !important;
+  //   }
 }
 </style>
