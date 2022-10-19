@@ -2,8 +2,8 @@ import Vue from "vue";
 import axios from 'axios';
 // 封装基础路径
 axios.defaults.baseURL = 'https://admin-api.macrozheng.com'
-const preRequest = () =>{
-    return
+const preRequest = (config) => {
+    return config
 }
 const errRequest = (err) =>{
     Vue.prototype.$Message.destroy();
