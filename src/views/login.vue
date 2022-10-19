@@ -11,14 +11,19 @@
                 </div>
                 <div class="formBox">
                     <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" class="demo-ruleForm">
-  <el-form-item prop="pass">
-    <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+  <el-form-item class="ipt" prop="username">
+    <i class="el-icon-user-solid"></i>
+    <el-input type="text" v-model="ruleForm.username" autocomplete="off"></el-input>
   </el-form-item>
-  <el-form-item  prop="checkPass">
-    <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+  <el-form-item class="ipt"  prop="password">
+    <i class="el-icon-s-goods icon"></i>
+    <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
   </el-form-item>
-  <el-form-item>
-    <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+    <el-form-item>
+   <div class="btnBox">
+    <el-button type="primary" :loading="loading" @click="submitForm('ruleForm')">登录</el-button>
+    <el-button type="primary">获取体验账号</el-button>
+   </div>
   </el-form-item>
 </el-form>
                 </div>
@@ -29,36 +34,34 @@
 <script>
 export default {
     data() {
-      var validatePass = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入密码'));
+      var username = (rule, value, callback) => {
+        if (value === '' || value !== 'admin' ) {
+          callback(new Error('请输入正确的用户名'));
         } else {
-          if (this.ruleForm.checkPass !== '') {
-            this.$refs.ruleForm.validateField('checkPass');
-          }
           callback();
         }
       };
-      var validatePass2 = (rule, value, callback) => {
+      var password = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error('请再次输入密码'));
-        } else if (value !== this.ruleForm.pass) {
-          callback(new Error('两次输入密码不一致!'));
+          callback(new Error('请输入密码'));
+        } else if (this.ruleForm.password.length <= 3) {
+          callback(new Error('密码不能小于3 位'));
         } else {
           callback();
         }
       };
       return {
         ruleForm: {
-          pass: '',
-          checkPass: '',
+         username: '',
+         password: '',
         },
+        loading:false,
         rules: {
-          pass: [
-            { validator: validatePass, trigger: 'blur' }
+            username: [
+            { validator: username, trigger: 'blur' }
           ],
-          checkPass: [
-            { validator: validatePass2, trigger: 'blur' }
+          password: [
+            { validator: password, trigger: 'blur' }
           ]
         }
       };
@@ -70,7 +73,24 @@ export default {
         submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            alert('submit!');
+            this.loading = true
+             this.$api.login.login(this.ruleForm).then(res =>{
+                this.loading = false
+                if(res.data.message == '操作成功'){
+                    sessionStorage.setItem('token', res.data.data.token)
+                    sessionStorage.setItem('tokenHead' , res.data.data.tokenHead)
+                    this.$message({
+                  message: '登录成功',
+                  type: 'success'
+                });
+                this.$router.push('/')
+                }else{
+                    this.$message({
+                  message: res.data.message,
+                  type: 'error'
+                });
+                }
+             })
           } else {
             console.log('error submit!!');
             return false;
@@ -81,7 +101,7 @@ export default {
     
 }
 </script>
-<style lang="less" scoped>
+<style lang="less">
 .loginMain {
     .login-center-layout {
         background: #409eff;
@@ -92,7 +112,7 @@ export default {
         margin-top: 200px;
     }
     .login{
-        position: fixed;
+        position: absolute;
         width: 358px;
         left: 50%;
         top: 50%;
@@ -103,7 +123,7 @@ export default {
         .line{
             width: 100%;
             height: 10px;
-            background-color: #53d408;
+            background-color: #409eff;
         }
         .imgBox{
             text-align: center;
@@ -123,5 +143,36 @@ export default {
             padding: 0 20px;
         }
     }
+    .btnBox{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+         button{
+            width: 140px;
+        }
+    }
+    .ipt {
+  width: 100%;
+  height: 42px;
+  display: flex;
+  padding-left: 10px;
+  border-radius: 5px;
+  border: 1px solid #DCDFE6;
+
+  .el-form-item__content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    &>i{
+        color: #409eff;
+    }
+  }
+
+  .el-input__inner {
+    border: 0;
+    flex: 1 !important;
+  }
+}
 }
 </style>
