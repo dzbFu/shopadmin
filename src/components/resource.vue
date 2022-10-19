@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <h1>order</h1>
-  </div>
+    <div>
+        <h1>resource</h1>
+    </div>
 </template>
 
 <script>
