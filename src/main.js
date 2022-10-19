@@ -7,6 +7,10 @@ import axios from './modules/http'
 // 引入ElementUI
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+//引入 ViewUI
+import ViewUI from 'view-design';
+import 'view-design/dist/styles/iview.css';
+Vue.use(ViewUI);
 Vue.config.productionTip = false
 // 使用
 Vue.prototype.$http = axios
