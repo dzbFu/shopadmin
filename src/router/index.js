@@ -6,7 +6,13 @@ Vue.use(VueRouter)
 const routes = [
   {
     path:'/',
-    component:Home
+    component: Home,
+    children:[
+      {
+        path:'',
+        component: () => import('../components/shouye.vue')
+      }
+    ]
   },
  {
   path:'/login',

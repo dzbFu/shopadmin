@@ -34,16 +34,21 @@
         </el-submenu>
       </el-menu>
     </div>
+    <div class="sec-right">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 <script>
+import HomeView from '../views/index.vue'
 export default {
   data() {
     return {
       isCollapse: true, //侧边折叠状态
       userphoto: "", //用户头像
       username: "", //用户名
-      menus: [] //用户权限列表
+      menus: [] ,//用户权限列表
+      menuChildren:[]
     };
   },
   created() {
@@ -51,28 +56,47 @@ export default {
     this.$api.home.menu().then(res => {
       this.userphoto = res.data.data.icon;
       this.username = res.data.data.username;
-      console.log(res.data.data.menus);
+      // console.log(res.data.data.menus);
       //用户权限数据重组
       let menus = res.data.data.menus;
       for (let i = 0; i < menus.length; i++) {
+         
         if (menus[i].parentId == 0) {
           this.menus.push(menus[i]);
           this.menus[this.menus.length - 1].children = [];
         } else {
             // menus[i].name=this.menus[this.menus.length - 1].name+'/'+menus[i].name
           this.menus[this.menus.length - 1].children.push(menus[i]);
+          this.menuChildren.push(menus[i].name)
         }
       }
-      console.log(this.menus);
+      console.log(this.menuChildren);
+     var route1 = {
+      path:'/',
+      component:HomeView,
+      children: [
+        {
+          path: '',
+          component: () => import('../components/shouye.vue')
+        }
+      ]
+    }
+    this.menuChildren.forEach(item => {
+      route1.children.push({
+        path:item,
+        component: () =>import(`../components/${item}.vue`)
+      })
+    })
+    this.$router.addRoute(route1)
     });
   },
 
   methods: {
     handleOpen(key, keyPath) {
-      console.log(key, keyPath);
+      // console.log(key, keyPath);
     },
     handleClose(key, keyPath) {
-      console.log(key, keyPath);
+      // console.log(key, keyPath);
     }
   }
 };
@@ -88,8 +112,9 @@ export default {
 .index-box {
   width: 100%;
   height: 100vh;
+  display: flex;
   .sec-left {
-    position: fixed;
+    // position: fixed;
     overflow: scroll;
     overflow-x: hidden;
     height: 100vh;
@@ -100,5 +125,8 @@ export default {
   //   ::v-deep .el-menu-item{
   //     background-color: #1f2d3d !important;
   //   }
+  .sec-right{
+    flex: 1;
+  }
 }
 </style>
