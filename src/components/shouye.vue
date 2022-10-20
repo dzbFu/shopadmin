@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>home页</h1>
+    <h1>home页-zzz</h1>
   </div>
 </template>
 <script>
