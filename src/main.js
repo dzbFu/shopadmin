@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import './api'
 import axios from './modules/http'
+import Breadcrumb from './components/Breadcrumb.vue'
 // 引入ElementUI
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
