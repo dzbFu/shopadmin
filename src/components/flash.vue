@@ -1,6 +1,9 @@
 <template>
     <div>
-        <h1>flash</h1>
+        <!-- 顶部页面信息 -->
+        <div id="top">
+            
+        </div>
     </div>
 </template>
 
