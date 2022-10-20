@@ -2,7 +2,7 @@
   <div class="index-box">
     <div class="sec-left">
       <el-menu
-        default-active
+        :default-active="childrenOpen"
         class="el-menu-vertical-demo"
         @open="handleOpen"
         @close="handleClose"
@@ -11,7 +11,7 @@
         :collapse-transition="true"
         text-color="#bfcbd9"
         router
-        
+        :default-openeds="openeds"
       >
         <el-menu-item index="/">
           <i class="el-icon-setting"></i>
@@ -49,13 +49,25 @@ export default {
       userphoto: "", //用户头像
       username: "", //用户名
       menus: [], //用户权限列表
-      menuChildren: []
+      menuChildren: [],//侧边子选项
+      openeds: JSON.parse(sessionStorage.getItem('open')),//获取默认选中
+      childrenOpen:''
     };
   },
   created() {
-    this.getlist()
+    this.getlist()  //获取用户侧边栏
   },
+  //进入路由拉取侧边栏
   beforeRouteEnter(to, from, next) { 
+      next((vm) => {
+        
+        if (to.path == '/') {
+          vm.childrenOpen = to.path
+        } else { 
+          vm.childrenOpen = to.path.replace('/','')
+        }
+      })
+    
     if (from.path == '/login') {
       next((vm) => { 
         vm.getlist()
@@ -65,14 +77,9 @@ export default {
     }
   },
   methods: {
-    select(index) { 
-
-    },
     handleOpen(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    handleClose(key, keyPath) {
-      // console.log(key, keyPath);
+      console.log(keyPath);
+      sessionStorage.setItem('open',JSON.stringify(keyPath))
     },
     getlist() {
       //获取用户路由权限信息
