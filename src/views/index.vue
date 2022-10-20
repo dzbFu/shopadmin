@@ -2,7 +2,7 @@
   <div class="index-box">
     <div class="sec-left">
       <el-menu
-        default-active=""
+        default-active
         class="el-menu-vertical-demo"
         @open="handleOpen"
         @close="handleClose"
@@ -11,15 +11,16 @@
         :collapse-transition="true"
         text-color="#bfcbd9"
         router
+        
       >
-        <el-menu-item index="">
+        <el-menu-item index="/">
           <i class="el-icon-setting"></i>
           <span slot="title">首页</span>
         </el-menu-item>
         <el-submenu
-          v-for="(item) in menus"
+          v-for="(item,index) in menus"
           :index="item.name"
-          :key="item.id"
+          :key="index"
           background-color="#1f2d3d"
         >
           <template slot="title">
@@ -27,9 +28,9 @@
             <span slot="title">{{item.title}}</span>
           </template>
           <el-menu-item
-            v-for="(item) in item.children"
+            v-for="(item,index) in item.children"
             :index="item.name"
-            :key="item.id"
+            :key="index"
           >{{item.title}}</el-menu-item>
         </el-submenu>
       </el-menu>
@@ -40,63 +41,75 @@
   </div>
 </template>
 <script>
-import HomeView from '../views/index.vue'
+import HomeView from "../views/index.vue";
 export default {
   data() {
     return {
       isCollapse: true, //侧边折叠状态
       userphoto: "", //用户头像
       username: "", //用户名
-      menus: [] ,//用户权限列表
-      menuChildren:[]
+      menus: [], //用户权限列表
+      menuChildren: []
     };
   },
   created() {
-    //获取用户路由权限信息
-    this.$api.home.menu().then(res => {
-      this.userphoto = res.data.data.icon;
-      this.username = res.data.data.username;
-      // console.log(res.data.data.menus);
-      //用户权限数据重组
-      let menus = res.data.data.menus;
-      for (let i = 0; i < menus.length; i++) {
-         
-        if (menus[i].parentId == 0) {
-          this.menus.push(menus[i]);
-          this.menus[this.menus.length - 1].children = [];
-        } else {
-            // menus[i].name=this.menus[this.menus.length - 1].name+'/'+menus[i].name
-          this.menus[this.menus.length - 1].children.push(menus[i]);
-          this.menuChildren.push(menus[i].name)
-        }
-      }
-      console.log(this.menuChildren);
-     var route1 = {
-      path:'/',
-      component:HomeView,
-      children: [
-        {
-          path: '',
-          component: () => import('../components/shouye.vue')
-        }
-      ]
-    }
-    this.menuChildren.forEach(item => {
-      route1.children.push({
-        path:item,
-        component: () =>import(`../components/${item}.vue`)
-      })
-    })
-    this.$router.addRoute(route1)
-    });
+    this.getlist()
   },
-
+  beforeRouteEnter(to, from, next) { 
+    if (from.path == '/login') {
+      next((vm) => { 
+        vm.getlist()
+      })
+    } else {
+      next()
+    }
+  },
   methods: {
+    select(index) { 
+
+    },
     handleOpen(key, keyPath) {
-      // console.log(key, keyPath);
+      console.log(key, keyPath);
     },
     handleClose(key, keyPath) {
       // console.log(key, keyPath);
+    },
+    getlist() {
+      //获取用户路由权限信息
+      this.$api.home.menu().then(res => {
+        this.menus=[]
+        this.userphoto = res.data.data.icon;
+        this.username = res.data.data.username;
+        //用户权限数据重组
+        let menus = res.data.data.menus;
+        for (let i = 0; i < menus.length; i++) {
+          if (menus[i].parentId == 0) {
+            this.menus.push(menus[i]);
+            this.menus[this.menus.length - 1].children = [];
+          } else {
+            // menus[i].name=this.menus[this.menus.length - 1].name+'/'+menus[i].name
+            this.menus[this.menus.length - 1].children.push(menus[i]);
+            this.menuChildren.push(menus[i].name);
+          }
+        }
+        var route1 = {
+          path: "/",
+          component: HomeView,
+          children: [
+            {
+              path: "",
+              component: () => import("../components/shouye.vue")
+            }
+          ]
+        };
+        this.menuChildren.forEach(item => {
+          route1.children.push({
+            path: item,
+            component: () => import(`../components/${item}.vue`)
+          });
+        });
+        this.$router.addRoute(route1);
+      });
     }
   }
 };
@@ -125,7 +138,7 @@ export default {
   //   ::v-deep .el-menu-item{
   //     background-color: #1f2d3d !important;
   //   }
-  .sec-right{
+  .sec-right {
     flex: 1;
   }
 }
