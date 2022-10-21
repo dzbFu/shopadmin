@@ -1,6 +1,5 @@
 <template>
     <div id="Admain">
-   <div>导航栏</div>
    <div class="adminMain">
     <div class="search">
       <div class="s-up">
