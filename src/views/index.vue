@@ -5,8 +5,7 @@
         :default-active="childrenOpen"
         class="el-menu-vertical-demo"
         @open="handleOpen"
-        @close="handleClose"
-        :collapse="false"
+        :collapse="$store.state.close_zt"
         background-color="#304156"
         :collapse-transition="true"
         text-color="#bfcbd9"
@@ -36,13 +35,18 @@
       </el-menu>
     </div>
     <div class="sec-right">
+      <Breadcrumb :datas="dataBreadcrumb"></Breadcrumb>
       <router-view></router-view>
     </div>
   </div>
 </template>
 <script>
 import HomeView from "../views/index.vue";
+import Breadcrumb from '../components/Breadcrumb.vue'
 export default {
+  components: {
+    Breadcrumb
+  },
   data() {
     return {
       isCollapse: true, //侧边折叠状态
@@ -51,8 +55,14 @@ export default {
       menus: [], //用户权限列表
       menuChildren: [],//侧边子选项
       openeds: JSON.parse(sessionStorage.getItem('open')),//获取默认选中
-      childrenOpen:''
+      childrenOpen: '',
+      dataBreadcrumb: [],//面包屑数据
     };
+  },
+  watch: {
+    $route(to,from) { 
+      this.getBreadcrumb()
+    }
   },
   created() {
     this.getlist()  //获取用户侧边栏
@@ -60,7 +70,6 @@ export default {
   //进入路由拉取侧边栏
   beforeRouteEnter(to, from, next) { 
       next((vm) => {
-        
         if (to.path == '/') {
           vm.childrenOpen = to.path
         } else { 
@@ -81,6 +90,19 @@ export default {
       console.log(keyPath);
       sessionStorage.setItem('open',JSON.stringify(keyPath))
     },
+    //获取面包屑数据
+    getBreadcrumb() { 
+      this.dataBreadcrumb = []
+      this.menus.forEach(item => {
+          item.children.forEach(s => {
+            if (s.name == this.$route.path.replace('/', '')) { 
+              this.dataBreadcrumb.push(item.title) 
+              this.dataBreadcrumb.push(s.title) 
+            }
+           })
+      });
+        console.log(this.dataBreadcrumb)
+    },
     getlist() {
       //获取用户路由权限信息
       this.$api.home.menu().then(res => {
@@ -99,6 +121,7 @@ export default {
             this.menuChildren.push(menus[i].name);
           }
         }
+        this.getBreadcrumb()
         var route1 = {
           path: "/",
           component: HomeView,
@@ -138,6 +161,7 @@ export default {
     overflow: scroll;
     overflow-x: hidden;
     height: 100vh;
+    display: flex;
   }
   .sec-left::-webkit-scrollbar {
     display: none;
