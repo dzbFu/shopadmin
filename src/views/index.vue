@@ -1,11 +1,11 @@
 <template>
   <div class="index-box">
+   <div style="max-width:200px">
     <div class="sec-left">
       <el-menu
         :default-active="childrenOpen"
         class="el-menu-vertical-demo"
         @open="handleOpen"
-        @close="handleClose"
         :collapse="false"
         background-color="#304156"
         :collapse-transition="true"
@@ -35,6 +35,7 @@
         </el-submenu>
       </el-menu>
     </div>
+   </div>
     <div class="sec-right">
       <router-view></router-view>
     </div>
@@ -122,9 +123,19 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.el-menu-vertical-demo:not(.el-menu--collapse) {
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+::v-deep .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
   min-height: 100vh;
+}
+::v-deep .el-menu-vertical-demo {
+  // min-height: calc(100vh - 60px);
+  height: 100%;
 }
 ::v-deep .el-menu-item {
   min-width: 0 !important;
@@ -133,10 +144,9 @@ export default {
   width: 100%;
   height: 100vh;
   display: flex;
+  overflow-y: scroll;
   .sec-left {
-    // position: fixed;
-    overflow: scroll;
-    overflow-x: hidden;
+    overflow-y: scroll;
     height: 100vh;
   }
   .sec-left::-webkit-scrollbar {
