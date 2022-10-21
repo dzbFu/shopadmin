@@ -1,6 +1,6 @@
 <template>
   <div class="index-box">
-   <div style="max-width:200px">
+   <div style="max-width:200px" class="big-left">
     <div class="sec-left">
       <el-menu
         :default-active="childrenOpen"
@@ -168,7 +168,6 @@ export default {
   width: 100%;
   height: 100vh;
   display: flex;
-  overflow-y: scroll;
   .sec-left {
     overflow-y: scroll;
     height: 100vh;
@@ -182,6 +181,8 @@ export default {
   //   }
   .sec-right {
     flex: 1;
+    height: 100vh;
+    overflow: auto;
   }
 }
 </style>
