@@ -103,7 +103,6 @@ export default {
             }
            })
       });
-        console.log(this.dataBreadcrumb)
     },
     getlist() {
       //获取用户路由权限信息
