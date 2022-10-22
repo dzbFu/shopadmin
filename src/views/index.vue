@@ -1,6 +1,6 @@
 <template>
   <div class="index-box">
-   <div style="max-width:200px" class="big-left">
+   <div style="max-width:180px" class="big-left">
     <div class="sec-left">
       <el-menu
         :default-active="childrenOpen"
@@ -110,6 +110,8 @@ export default {
       this.$api.home.menu().then(res => {
         this.menus=[]
         this.userphoto = res.data.data.icon;
+        this.$store.commit('userphoto', res.data.data.icon)
+        console.log(this.$store.state.userphoto)
         this.username = res.data.data.username;
         //用户权限数据重组
         let menus = res.data.data.menus;
