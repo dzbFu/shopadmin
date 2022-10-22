@@ -8,14 +8,14 @@
         <span>筛选搜索</span>
        </div>
        <div>
-        <el-button size="mini">重置</el-button>
-        <el-button size="mini" type="primary">查询搜索</el-button>
+        <el-button size="mini" @click="reset">重置</el-button>
+        <el-button size="mini" type="primary" @click="search">查询搜索</el-button>
        </div>
 
       </div>
       <div class="sousuo">
         <span>输入搜索:</span>
-        <el-input size="mini" v-model="input" placeholder="账号/姓名"></el-input>
+        <el-input size="mini" v-model="input" placeholder="账号/姓名"  clearable></el-input>
       </div>
     </div>
    <div class="el-card__body">
@@ -23,7 +23,7 @@
       <i class="el-icon-document"></i>
       <span>数据列表</span>
     </div>
-    <el-button size="mini">添加</el-button>
+    <el-button size="mini" @click="dialogFormVisible = true">添加</el-button>
    </div>
    <el-table
     :data="tableData"
@@ -67,9 +67,11 @@
     </el-table-column>
     <el-table-column
       label="操作">
-      <el-button size="mini" type="text">分配角色</el-button>
-      <el-button size="mini" type="text">编辑</el-button>
-      <el-button size="mini" type="text">删除</el-button>
+      <template slot-scope="scope">
+      <el-button size="mini" type="text" @click="fenpei(scope.row)">分配角色</el-button>
+      <el-button size="mini" type="text" @click="edit(scope.row)">编辑</el-button>
+      <el-button size="mini" type="text" @click="open(scope.row)">删除</el-button>
+      </template>
     </el-table-column>
   </el-table>
    <div class="fenye">
@@ -83,6 +85,78 @@
       :total="total">
     </el-pagination>
    </div>
+   <el-dialog width="40%" title="添加用户" :visible.sync="dialogFormVisible">
+    <el-form label-position="right" label-width="100px" :model="formLabelAlign">
+  <el-form-item label="账号：">
+    <el-input v-model="formLabelAlign.username"></el-input>
+  </el-form-item>
+  <el-form-item label="姓名：">
+    <el-input v-model="formLabelAlign.nickName"></el-input>
+  </el-form-item>
+  <el-form-item label="邮箱：">
+    <el-input v-model="formLabelAlign.email"></el-input>
+  </el-form-item>
+  <el-form-item label="密码：">
+    <el-input v-model="formLabelAlign.password"></el-input>
+  </el-form-item>
+  <el-form-item label="备注：">
+    <el-input type="textarea" v-model="formLabelAlign.desc"></el-input>
+  </el-form-item>
+  <el-form-item label="是否启用：">
+    <el-radio-group v-model="radio">
+    <el-radio :label="1">是</el-radio>
+    <el-radio :label="0">否</el-radio>
+  </el-radio-group>
+  </el-form-item>
+</el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisible = false">取 消</el-button>
+    <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+  </div>
+</el-dialog>
+<el-dialog width="30%" title="分配角色" :visible.sync="dialogFormVisible2">
+    <el-select v-model="value1" multiple placeholder="请选择" >
+    <el-option
+      v-for="item in options"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value">
+    </el-option>
+  </el-select>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisible2 = false">取 消</el-button>
+    <el-button type="primary" @click="dialogFormVisible2 = false">确 定</el-button>
+  </div>
+</el-dialog>
+<el-dialog width="40%" title="添加用户" :visible.sync="dialogFormVisible3">
+    <el-form label-position="right" label-width="100px" :model="formLabelAlign2">
+  <el-form-item label="账号：">
+    <el-input v-model="formLabelAlign2.username"></el-input>
+  </el-form-item>
+  <el-form-item label="姓名：">
+    <el-input v-model="formLabelAlign2.nickName"></el-input>
+  </el-form-item>
+  <el-form-item label="邮箱：">
+    <el-input v-model="formLabelAlign2.email"></el-input>
+  </el-form-item>
+  <el-form-item label="密码：">
+    <el-input type="password" v-model="formLabelAlign2.password"></el-input>
+  </el-form-item>
+  <el-form-item label="备注：">
+    <el-input type="textarea" v-model="formLabelAlign2.desc"></el-input>
+  </el-form-item>
+  <el-form-item label="是否启用：">
+    <el-radio-group v-model="radio2">
+    <el-radio :label="1">是</el-radio>
+    <el-radio :label="0">否</el-radio>
+  </el-radio-group>
+  </el-form-item>
+</el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisible3 = false">取 消</el-button>
+    <el-button type="primary" @click="dialogFormVisible3 = false">确 定</el-button>
+  </div>
+</el-dialog>
    </div>
   </div>
  
@@ -97,15 +171,97 @@ export default {
       pageSize:10,
       pageNum:1,
       total:0,
-      value:true
+      value:true,
+      keyword:'',
+      dialogFormVisible: false,
+      dialogFormVisible2:false,
+      dialogFormVisible3:false,
+      options: [{
+          value: '选项1',
+          label: '黄金糕'
+        }, {
+          value: '选项2',
+          label: '双皮奶'
+        }, {
+          value: '选项3',
+          label: '蚵仔煎'
+        }, {
+          value: '选项4',
+          label: '龙须面'
+        }, {
+          value: '选项5',
+          label: '北京烤鸭'
+        }],
+        value1: [],
+      radio:1,
+      radio2:1,
+      formLabelAlign: {
+        username: '',
+        nickName: '',
+        email: '',
+        password:'',
+        desc:''
+        },
+        formLabelAlign2: {
+        username: '',
+        nickName: '',
+        email: '',
+        password:'',
+        desc:''
+        },
     }
   },
   created(){
     this.getList()
   },
   methods:{
+    open(val){
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          // 在这发送请求接口删除
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+    },
+    edit(val){
+      this.dialogFormVisible3 = true
+      console.log(val);
+      this.formLabelAlign2.username  = val.username
+      this.formLabelAlign2.nickName = val.nickName
+      this.formLabelAlign2.email = val.email
+      this.formLabelAlign2.password = val.password
+      if(val.status){
+        this.radio2 = 1
+      }else{
+        this.radio2 = 0
+      }
+    },
+    fenpei(val){
+      this.dialogFormVisible2 = true
+    },
+    search(){
+      this.keyword = this.input
+      this.getList()
+    },
+    // 重置的
+    reset(){
+      this.input = ''
+      this.keyword = this.input
+      this.getList()
+    },
+    // 获取表格数据
     getList(){
-      this.$api.rights.getList(this.pageNum , this.pageSize).then(res =>{
+      this.$api.rights.getList(this.pageNum , this.pageSize , this.keyword).then(res =>{
         console.log(res.data.data);
         this.tableData = res.data.data.list
         this.tableData.forEach(item =>{
@@ -118,6 +274,7 @@ export default {
         this.total = res.data.data.total
       })
     },
+    // 重置表格中时间的数据
     getTime(time){
       var date = new Date(time)
       var year = date.getFullYear()
@@ -128,6 +285,7 @@ export default {
       var second = date.getSeconds()
       return `${year}-${month}-${day} ${hour < 9 ? '0' + hour : hour}:${minute < 9 ? '0' + minute:minute}:${second < 9 ? '0' + second:second}`
     },
+     // 重置表格中时间的数据
     getloginTime(time){
       if(!time){
         return 'N/A'
@@ -142,6 +300,7 @@ export default {
       return `${year}-${month}-${day} ${hour < 9 ? '0' + hour : hour}:${minute < 9 ? '0' + minute:minute}:${second < 9 ? '0' + second:second}`
       }
     },
+    // 是表格的数据居中
     rowStyle() {
       return "text-align:center";
     },
@@ -155,9 +314,11 @@ export default {
     },
     handleSizeChange(val) {
         this.pageSize = val
+        this.getList()
       },
       handleCurrentChange(val) {
         this.pageNum = val
+        this.getList()
       },
   },
 }
@@ -224,5 +385,4 @@ export default {
   .el-table .success-row {
     background: #f0f9eb;
   }
- 
 </style>
