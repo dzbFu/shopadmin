@@ -15,6 +15,14 @@ const routes = [
       {
         path:'allocMenu',
         component:() => import('../components/allocMenu.vue')
+      },
+      {
+        path:'allocResource',
+        component:() => import('../components/allocResource.vue')
+      },
+      {
+        path:'updateMenu',
+        component:() => import('../components/updateMenu.vue')
       }
     ]
   },

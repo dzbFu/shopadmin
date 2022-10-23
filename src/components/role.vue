@@ -65,7 +65,7 @@
     label="操作">
     <template slot-scope="scope">
     <el-button size="mini" type="text" @click="menu(scope.row)">分配菜单</el-button>
-    <el-button size="mini" type="text">分配资源</el-button>
+    <el-button size="mini" type="text" @click="resource(scope.row)">分配资源</el-button>
     <el-button size="mini" type="text" @click="edit(scope.row)">编辑</el-button>
     <el-button size="mini" type="text" @click="open(scope.row)">删除</el-button>
     </template>
@@ -185,6 +185,9 @@ created(){
   this.getList()
 },
 methods:{
+  resource(val){
+    this.$router.push(`/allocResource?roleId=${val.id}`)
+  },
   menu(val){
     this.$router.push(`/allocMenu?roleId=${val.id}`)
   },

@@ -27,5 +27,22 @@ export default{
     roleId(id){
         var url = `/role/listMenu/${id}`
         return Vue.prototype.$http.get(url)
-    }
+    },
+    listAll(){
+        var url = '/resource/listAll'
+        return Vue.prototype.$http.get(url)
+    },
+    menuList(pageNum , pageSize , keyword){
+        if(keyword){
+            var url=`/menu/list/0?pageNum=${pageNum}&pageSize=${pageSize}&keyword=${keyword}`
+            return Vue.prototype.$http.get(url)
+        }else{
+            var url=`/menu/list/0?pageNum=${pageNum}&pageSize=${pageSize}`
+            return Vue.prototype.$http.get(url)
+        }
+    },
+    chakan(pageNum , pageSize , id){
+        var url = `/menu/list/${id}?pageNum=${pageNum}&pageSize=${pageSize}`
+        return Vue.prototype.$http.get(url)
+    },
 }
