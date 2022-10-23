@@ -11,6 +11,10 @@ const routes = [
       {
         path:'',
         component: () => import('../components/shouye.vue')
+      },
+      {
+        path:'allocMenu',
+        component:() => import('../components/allocMenu.vue')
       }
     ]
   },
