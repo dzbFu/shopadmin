@@ -7,6 +7,11 @@ import axios from './modules/http'
 // 引入ElementUI
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+// fade/zoom 等
+import 'element-ui/lib/theme-chalk/base.css';
+// collapse 展开折叠
+import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
+Vue.component(CollapseTransition.name, CollapseTransition)
 //引入 ViewUI
 import ViewUI from 'view-design';
 import 'view-design/dist/styles/iview.css';

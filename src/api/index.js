@@ -7,5 +7,6 @@ import product from './product'
 Vue.prototype.$api = {
      login,
      home,
-     rights
+     rights,
+     product
 }

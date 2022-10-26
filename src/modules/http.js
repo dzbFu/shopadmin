@@ -7,6 +7,7 @@ axios.defaults.baseURL = 'https://admin-api.macrozheng.com'
 const preRequest = (config) => {
     ViewUI.LoadingBar.start();
     config.headers.Authorization = sessionStorage.tokenHead + sessionStorage.token;
+    config.headers['Content-Type'] = 'application/json;charset=UTF-8'
     return config
 }
 const errRequest = (err) =>{

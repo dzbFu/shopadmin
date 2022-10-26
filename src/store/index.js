@@ -6,7 +6,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     close_zt: false,
-    userphoto:''
+    userphoto: '',
+    loading: false,
   },
   getters: {
   },
@@ -16,7 +17,10 @@ export default new Vuex.Store({
     },
     userphoto(state,v) {
       state.userphoto = v
-     }
+    },
+    uudataloading(state) { 
+      state.loading = !state.loading
+    }
   },
   actions: {
   },
