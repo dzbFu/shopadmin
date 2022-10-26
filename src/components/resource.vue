@@ -9,7 +9,7 @@
           </div>
           <div>
             <el-button size="mini" @click="resetForm('ruleForm')">重置</el-button>
-            <el-button size="mini" type="primary">查询搜索</el-button>
+            <el-button size="mini" type="primary" @click="search('ruleForm')">查询搜索</el-button>
           </div>
         </div>
         <div class="middle">
@@ -21,14 +21,14 @@
             label-width="100px"
             class="demo-ruleForm"
           >
-            <el-form-item label="活动名称：" prop="name">
-              <el-input v-model="ruleForm.name"></el-input>
+            <el-form-item label="活动名称：" prop="nameKeyword">
+              <el-input v-model="ruleForm.nameKeyword"></el-input>
             </el-form-item>
-            <el-form-item label="资源路径:" prop="url">
-              <el-input v-model="ruleForm.url"></el-input>
+            <el-form-item label="资源路径:" prop="urlKeyword">
+              <el-input v-model="ruleForm.urlKeyword"></el-input>
             </el-form-item>
-            <el-form-item label="资源分类："  prop="value">
-              <el-select v-model="ruleForm.value" placeholder="全部">
+            <el-form-item label="资源分类："  prop="categoryId">
+              <el-select v-model="ruleForm.categoryId" placeholder="全部">
                 <el-option
                   v-for="item in options"
                   :key="item.id"
@@ -46,8 +46,8 @@
             <span>数据列表</span>
         </div>
         <div>
-            <el-button size="mini">资源分类</el-button>
-            <el-button size="mini">添加</el-button>
+            <el-button size="mini" @click="resourceCategory">资源分类</el-button>
+            <el-button size="mini" @click="add">添加</el-button>
         </div>
       </div>
       <div class="table">
@@ -79,11 +79,14 @@
       </el-table-column>
       <el-table-column
         label="操作">
-        <el-button type="text">编辑</el-button>
-        <el-button type="text">删除</el-button>
+        <template slot-scope="scope">
+        <el-button type="text" @click="edit(scope.row)">编辑</el-button>
+        <el-button type="text" @click="del(scope.row)">删除</el-button>
+      </template>
       </el-table-column>
     </el-table>
       </div>
+      <!-- 分页 -->
       <div class="fenye">
         <el-pagination
       @size-change="handleSizeChange"
@@ -95,6 +98,66 @@
       :total="total">
     </el-pagination>
       </div>
+      <!-- 编辑弹出框 -->
+      <el-dialog title="编辑资源" width='40%' :visible.sync="dialogFormVisible">
+        <div class="info">
+          <el-form label-position="right" label-width="120px" :model="formLabelAlign">
+  <el-form-item label="资源名称：">
+    <el-input v-model="formLabelAlign.name"></el-input>
+  </el-form-item>
+  <el-form-item label="资源路径：">
+    <el-input v-model="formLabelAlign.url"></el-input>
+  </el-form-item>
+  <el-form-item label="资源分类：">
+    <el-select v-model="formLabelAlign.value"  clearable  placeholder="全部">
+                <el-option
+                  v-for="item in options"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+  </el-form-item>
+  <el-form-item label="描述：">
+    <el-input type="textarea" v-model="formLabelAlign.desc"></el-input>
+  </el-form-item>
+       </el-form>
+        </div>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisible = false">取 消</el-button>
+    <el-button type="primary" @click="sure">确 定</el-button>
+  </div>
+</el-dialog>
+      <!-- 添加弹出框 -->
+      <el-dialog title="编辑资源" width='40%' :visible.sync="dialogFormVisible2">
+        <div class="info">
+          <el-form label-position="right" label-width="120px" :model="formLabelAlign2">
+  <el-form-item label="资源名称：">
+    <el-input v-model="formLabelAlign2.name"></el-input>
+  </el-form-item>
+  <el-form-item label="资源路径：">
+    <el-input v-model="formLabelAlign2.url"></el-input>
+  </el-form-item>
+  <el-form-item label="资源分类：">
+    <el-select v-model="formLabelAlign2.value"  clearable  placeholder="全部">
+                <el-option
+                  v-for="item in options"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+  </el-form-item>
+  <el-form-item label="描述：">
+    <el-input type="textarea" v-model="formLabelAlign2.desc"></el-input>
+  </el-form-item>
+       </el-form>
+        </div>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisible2 = false">取 消</el-button>
+    <el-button type="primary" @click="sure1">确 定</el-button>
+  </div>
+</el-dialog>
     </div>
   </div>
 </template>
@@ -104,15 +167,29 @@ export default {
   data() {
     return {
       ruleForm: {
-        name: "",
-        url: "",
-        value:'',
+        nameKeyword: "",
+        urlKeyword: "",
+        categoryId:'',
       },
       tableData:[],
       pageNum:1,
       pageSize:10,
       total:0,
       options:[],
+      dialogFormVisible:false,
+      formLabelAlign: {
+          name: '',
+          url: '',
+          value: '',
+          desc:''
+        },
+        formLabelAlign2: {
+          name: '',
+          url: '',
+          value: '',
+          desc:''
+        },
+        dialogFormVisible2:false
     };
   },
   created(){
@@ -123,14 +200,18 @@ export default {
     getListAll(){
         this.$api.rights.listAll().then(res =>{
             this.options = res.data.data
+            this.formLabelAlign2.value = this.options[0].id 
         })
     },
     resetForm(formName) {
         this.$refs[formName].resetFields();
+        this.getList()
+      },
+      search(){
+          this.getList()
       },
       getList(){
-        this.$api.rights.list(this.pageNum , this.pageSize).then(res =>{
-            console.log(res.data.data);
+        this.$api.rights.list(this.pageNum , this.pageSize , this.ruleForm).then(res =>{
             this.tableData = res.data.data.list
             this.tableData.forEach(item =>{
                 item.createTime = this.getTime(item.createTime)
@@ -158,6 +239,77 @@ export default {
       handleCurrentChange(val) {
         this.pageNum = val
         this.getList()
+      },
+      edit(val){
+        this.dialogFormVisible = true
+        console.log(val);
+        this.formLabelAlign.name = val.name
+        this.formLabelAlign.url = val.url
+        this.formLabelAlign.value = val.categoryId
+        this.formLabelAlign.desc = val.description
+      },
+      sure(){
+        this.$confirm('是否确认?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          // 在这发送请求，发送数据给后端，然后渲染页面
+          this.dialogFormVisible = false
+          this.$message({
+            type: 'success',
+            message: '添加成功!'
+          });
+        }).catch(() => {
+          this.dialogFormVisible = false
+          this.$message({
+            type: 'info',
+            message: '已取消！'
+          });          
+        });
+      },
+      // 添加确认
+      sure1(){
+        this.$confirm('是否确认?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          // 在这发送请求，发送数据给后端，然后渲染页面
+          this.dialogFormVisible2 = false
+          this.$message({
+            type: 'success',
+            message: '添加成功！'
+          });
+        }).catch(() => {
+          this.dialogFormVisible2 = false
+        });
+      },
+      del(val){
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          //拿到这条数据的id，然后发送请求，发送数据给后端，然后渲染页面
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+      },
+      add(){
+        this.getListAll()
+        this.dialogFormVisible2 = true
+      },
+      resourceCategory(){
+        this.$router.push('/resourceCategory')
       }
   }
 };
@@ -202,6 +354,12 @@ export default {
     margin: 30px 0 0 0;
     display: flex;
     justify-content: right;
+  }
+  .info{
+    width: 100%;
+    height: 100%;
+    padding: 20px 30px;
+    box-sizing: border-box;
   }
 }
 ::v-deep .demo-ruleForm {

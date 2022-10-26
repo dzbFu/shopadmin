@@ -27,6 +27,10 @@ const routes = [
       {
         path:'addMenu',
         component:() => import('../components/addMenu.vue')
+      },
+      {
+        path:'resourceCategory',
+        component:() => import('../components/resourceCategory.vue')
       }
     ]
   },

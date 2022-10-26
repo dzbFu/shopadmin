@@ -53,8 +53,16 @@ export default{
         var url = '/resourceCategory/listAll'
         return Vue.prototype.$http(url)
     },
-    list(pageNum , pageSize){
+    list(pageNum , pageSize , data){
         var url = `/resource/list?pageNum=${pageNum}&pageSize=${pageSize}`
+        return Vue.prototype.$http.get(url , {
+            params:{
+                ...data
+            }
+        })
+    },
+    resourceCategoryListAll(){
+        var url = '/resourceCategory/listAll'
         return Vue.prototype.$http.get(url)
     }
 }
