@@ -6,10 +6,14 @@
         <div></div>
         <div></div>
       </div>
+      <transition name="el-fade-in">
       <el-breadcrumb separator="/" style="display:flex;align-items: center;">
+        
         <el-breadcrumb-item to="/">首页</el-breadcrumb-item>
         <el-breadcrumb-item v-for="(item,index) in datas" :key="index">{{item}}</el-breadcrumb-item>
+        
       </el-breadcrumb>
+      </transition>
     </div>
     <el-dropdown class="pull" trigger="click" @command="clickMenus">
       <span class="el-dropdown-link">
