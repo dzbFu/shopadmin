@@ -223,6 +223,7 @@ export default {
         value2: ''
       };
     },
+  created() { },
   mounted() {
     var myChart = echarts.init(document.getElementById('echarts'));
     let option = {
