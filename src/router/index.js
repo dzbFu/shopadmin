@@ -23,6 +23,10 @@ const routes = [
       {
         path:'updateMenu',
         component:() => import('../components/updateMenu.vue')
+      },
+      {
+        path:'addMenu',
+        component:() => import('../components/addMenu.vue')
       }
     ]
   },

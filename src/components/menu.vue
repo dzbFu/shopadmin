@@ -5,7 +5,7 @@
       <i class="el-icon-document"></i>
       <span>数据列表</span>
     </div>
-    <el-button size="mini">添加</el-button>
+    <el-button size="mini" @click="addMenu">添加</el-button>
    </div>
    <div class="table">
     <el-table
@@ -61,7 +61,7 @@
         label="操作">
         <template slot-scope="scope">
         <el-button type="text" @click="edit(scope.row)">编辑</el-button>
-        <el-button type="text">删除</el-button>
+        <el-button type="text" @click="del(scope.row)">删除</el-button>
         </template>
       </el-table-column>  
     </el-table>
@@ -113,6 +113,9 @@ export default {
       if(level == 0){
         return '一级'
       }
+      if(level == 1){
+        return '二级'
+      }
     },
     getHidden(val){
       if(val == 0){
@@ -147,6 +150,27 @@ export default {
       edit(val){
         this.$router.push(`/updateMenu?id=${val.id}`)
       },
+      del(val){
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          // 拿到这条数数据的id，然后发送数据，渲染页面就行，由于本接口不能用，所以发不了请求
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+      },
+      addMenu(){
+        this.$router.push('/addMenu')
+      }
   }
 }
 </script>

@@ -45,4 +45,16 @@ export default{
         var url = `/menu/list/${id}?pageNum=${pageNum}&pageSize=${pageSize}`
         return Vue.prototype.$http.get(url)
     },
+    updateMenu(id){
+        var url = `/menu/${id}`
+        return Vue.prototype.$http(url)
+    },
+    listAll(){
+        var url = '/resourceCategory/listAll'
+        return Vue.prototype.$http(url)
+    },
+    list(pageNum , pageSize){
+        var url = `/resource/list?pageNum=${pageNum}&pageSize=${pageSize}`
+        return Vue.prototype.$http.get(url)
+    }
 }
