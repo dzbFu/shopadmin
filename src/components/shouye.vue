@@ -223,20 +223,6 @@ export default {
         value2: ''
       };
     },
-  created() {
-    // 注册必须的组件
-    echarts.use([
-      TitleComponent,
-      TooltipComponent,
-      GridComponent,
-      DatasetComponent,
-      TransformComponent,
-      LineChart,
-      LabelLayout,
-      UniversalTransition,
-      CanvasRenderer
-    ]);
-  },
   mounted() {
     var myChart = echarts.init(document.getElementById('echarts'));
     let option = {
