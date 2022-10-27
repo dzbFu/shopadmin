@@ -38,7 +38,9 @@
    </div>
     <div class="sec-right">
       <Breadcrumb :datas="dataBreadcrumb"></Breadcrumb>
-      <router-view></router-view>
+      <transition name="el-fade-in-linear">
+        <router-view></router-view>
+        </transition> 
     </div>
   </div>
 </template>
