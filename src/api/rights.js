@@ -57,6 +57,7 @@ export default{
         var url = `/resource/list?pageNum=${pageNum}&pageSize=${pageSize}`
         return Vue.prototype.$http.get(url , {
             params:{
+                // 展开data里面的数据
                 ...data
             }
         })
