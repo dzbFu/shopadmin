@@ -45,7 +45,7 @@
             <div>
                 <el-icon class="el-icon-tickets"></el-icon><span style="margin-left:10px;">数据列表</span>
             </div>
-            <el-button size="mini">添加</el-button>
+            <el-button size="mini" @click="add_btn">添加</el-button>
         </div>
         <div class="table">
             <el-table :data="tableData" border style="width: 100%" @selection-change="handleSelectionChange" v-loading="$store.state.loading">
@@ -105,7 +105,7 @@
                     <template slot-scope="scope">
                         <div class="sec">
                             <el-button size="mini">查看</el-button>
-                            <el-button size="mini">编辑</el-button>
+                            <el-button size="mini" @click="edit_product(scope.row)">编辑</el-button>
                             <el-button size="mini">日志</el-button>
                             <el-button size="mini" type="danger" @click="del(scope.row)">删除</el-button>
                         </div>
@@ -217,6 +217,12 @@ export default {
         this.getlist()
     },
     methods: {
+        edit_product(d) { 
+            this.$router.push(`/editproduct?id=${d.id}`)
+        },
+        add_btn() {
+            this.$router.push('/addProduct')
+         },
         currentChange() { 
             this.getlist()
         },
@@ -328,6 +334,7 @@ export default {
     width: 98%;
     margin: auto;
     margin-top: 20px !important;
+    margin-bottom: 20px !important;
     display: flex;
     align-items: center;
     justify-content: space-between;

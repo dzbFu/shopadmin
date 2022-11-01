@@ -31,6 +31,10 @@ const routes = [
       {
         path:'resourceCategory',
         component:() => import('../components/resourceCategory.vue')
+      },
+      {
+        path: 'editproduct',
+        component:()=>import('../components/editproduct.vue')
       }
     ]
   },
