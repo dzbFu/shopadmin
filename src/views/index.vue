@@ -38,7 +38,7 @@
    </div>
     <div class="sec-right">
       <Breadcrumb :datas="dataBreadcrumb"></Breadcrumb>
-      <router-view></router-view>
+      <transition name="el-zoom-in-center"><router-view></router-view></transition>
     </div>
   </div>
 </template>
