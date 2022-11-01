@@ -154,7 +154,7 @@
 </template>
 <script>
 export default {
-    data() {
+    data(){
         return {
             schedule: 0,
             ruleForm: {
