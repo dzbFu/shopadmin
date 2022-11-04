@@ -44,6 +44,23 @@ export default {
             }
         }
         return Vue.prototype.$http.post(`/product/update/${k.split(':')[0]}?ids=${s}&${k}`)
+    },
+    productAttribute() { 
+        return Vue.prototype.$http.get('/productAttribute/category/list?pageNum=1&pageSize=100')
+    },
+    subject() { 
+        return Vue.prototype.$http.get('/subject/listAll')
+    },
+    Specification(d) {
+        return Vue.prototype.$http.get(`/productAttribute/list/${d}?pageNum=1&pageSize=100&type=0`)
+    },
+    parameter(d) { 
+        return Vue.prototype.$http.get(`/productAttribute/list/${d}?pageNum=1&pageSize=100&type=1`)
+    },
+    prefrenceArea() { 
+        return Vue.prototype.$http.get('/prefrenceArea/listAll')
+    },
+    create(d) { 
+        return Vue.prototype.$http.get('/product/create',{d})
     }
-
 }

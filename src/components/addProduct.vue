@@ -132,15 +132,35 @@
                             <el-input v-model="scope.row.number"></el-input>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="name" label="价格" align="center">
+                    <el-table-column prop="name" label="折扣" align="center">
                         <template slot-scope="scope">
                             <el-input v-model="scope.row.price"></el-input>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="name" label="价格" align="center">
+                    <el-table-column prop="name" label="操作" align="center">
                         <template slot-scope="scope">
-                            <el-button type="text" @click="delTable(scope.$index)">删除</el-button>
-                            <el-button type="text" @click="addTable">添加</el-button>
+                            <el-button type="text" @click="delTable(scope.$index, 'LadderPrice')">删除</el-button>
+                            <el-button type="text" @click="addTable('LadderPrice')">添加</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-form-item>
+            <el-form-item v-if="ruleForm.discount == '满减价格'">
+                <el-table :data="ruleForm.fullReduction" border style="width: 380px">
+                    <el-table-column prop="date" label="满" align="center">
+                        <template slot-scope="scope">
+                            <el-input v-model="scope.row.full"></el-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="name" label="立减" align="center">
+                        <template slot-scope="scope">
+                            <el-input v-model="scope.row.price"></el-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="name" label="操作" align="center">
+                        <template slot-scope="scope">
+                            <el-button type="text" @click="delTable(scope.$index, 'fullReduction')">删除</el-button>
+                            <el-button type="text" @click="addTable('fullReduction')">添加</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -150,13 +170,134 @@
                 <el-button @click="validate('ruleForm1')" type="primary">下一步，填写商品促销</el-button>
             </div>
         </el-form>
+        <el-form :model="ruleForm" v-if="schedule == 2" :rules="rules" ref="ruleForm2" label-width="100px"
+            class="demo-ruleForm" size="small">
+            <el-form-item label="属性类型：">
+                <el-select v-model="ruleForm.propertyType" placeholder="请选择">
+                    <el-option v-for="item in formData.productAttribute" :key="item.id" :label="item.name"
+                        :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="商品规格：">
+                <div class="Specification-box">
+                    <div v-if="ruleForm.propertyType && formData.Specification.length">
+                        <div>颜色：</div>
+                        <el-checkbox-group v-model="ruleForm.SpecificationSEC">
+                            <el-checkbox v-for="(item, index) in ruleForm.SpecificationData" :key="index">
+                                {{ item }}
+                                <el-button @click="removesocification(index)" type="text">删除</el-button>
+                            </el-checkbox>
+                        </el-checkbox-group>
+                        <el-input size="small" style="width:160px" placeholder="请输入内容"
+                            v-model="ruleForm.inputSpecification" clearable>
+                        </el-input>
+                        <el-button size="small" style="margin-left:10px" @click="addspecification">增加</el-button>
+                        <div>尺寸：</div>
+                        <el-checkbox-group v-model="ruleForm.size">
+                            <el-checkbox v-for="(item, index) in formData.Specification" :key="index" :label="item">
+                            </el-checkbox>
+                        </el-checkbox-group>
+                    </div>
+                </div>
+                <el-table :data="tableData" border style="width: 600px;margin-top:20px;">
+                    <el-table-column label="销售价格" align="center">
+                    </el-table-column>
+                    <el-table-column label="商品库存" align="center">
+                    </el-table-column>
+                    <el-table-column label="库存预警值" align="center">
+                    </el-table-column>
+                    <el-table-column label="SKU编号" align="center">
+                    </el-table-column>
+                    <el-table-column label="操作" align="center">
+                    </el-table-column>
+                </el-table>
+                <div style="margin-top:20px;">
+                    <el-button size="small" type="primary">刷新列表</el-button>
+                    <el-button size="small" type="primary">同步价格</el-button>
+                    <el-button size="small" type="primary">同步库存</el-button>
+                </div>
+            </el-form-item>
+            <el-form-item label="商品参数：">
+                <div class="Specification-box">
+                    <el-form-item :label="item.name + ':'" v-for="(item, index) in formData.parameter" :key="index">
+                        <el-input v-if="item.inputType == 0" v-model="item.inputList" style="width:205.4px"></el-input>
+                        <el-select v-if="item.inputType" v-model="item.sec" placeholder="请选择">
+                            <el-option v-for="item in item.inputList.split(',')" :key="item" :label="item"
+                                :value="item"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </div>
+            </el-form-item>
+            <el-form-item label="商品相册：">
+                <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card">
+                    <i class="el-icon-plus"></i>
+                </el-upload>
+                <el-dialog :visible.sync="dialogVisible">
+                    <img width="100%" :src="dialogImageUrl" alt="">
+                </el-dialog>
+            </el-form-item>
+            <el-form-item label="规格参数：">
+                <el-tabs v-model="activeName" type="card">
+                    <el-tab-pane label="电脑端详情" name="pc">
+                        <editor :init="{
+                            plugins: 'lists link image table code help wordcount',
+                            language: 'zh_CN'
+                        }" />
+                    </el-tab-pane>
+                    <el-tab-pane label="移动端详情" name="mobile">
+                        <editor :init="{
+                            plugins: 'lists link image table code help wordcount',
+                            language: 'zh_CN'
+                        }" />
+                    </el-tab-pane>
+                </el-tabs>
+            </el-form-item>
+            <div class="form-btn">
+                <el-button @click="schedule--">上一步，填写商品信息</el-button>
+                <el-button @click="validate('ruleForm2')" type="primary">下一步，填写商品促销</el-button>
+            </div>
+        </el-form>
+        <el-form :model="ruleForm" v-if="schedule == 3" :rules="rules" ref="ruleForm3" label-width="100px">
+            <el-form-item label="关联专题：" style="margin-top:20px;">
+                <el-transfer v-model="association" :titles="['待选择', '已选择']" filterable :props="{
+                    key: 'id',
+                    label: 'title'
+                }" :data="data">
+                </el-transfer>
+            </el-form-item>
+            <el-form-item label="关联优选：" style="margin-top:20px;">
+                <el-transfer v-model="preferred" :titles="['待选择', '已选择']" filterable :props="{
+                    key: 'id',
+                    label: 'name'
+                }" :data="data2">
+                </el-transfer>
+            </el-form-item>
+            <div class="form-btn">
+                <el-button @click="schedule--">上一步，填写商品信息</el-button>
+                <el-button @click="SubmitProduct()" type="primary">完成提交商品</el-button>
+            </div>
+        </el-form>
     </div>
 </template>
 <script>
+import Editor from '@tinymce/tinymce-vue'
 export default {
-    data(){
+
+    components: {
+        'editor': Editor
+    },
+    data() {
         return {
+            preferred: [],
+            association: [],
+            activeName: 'pc',
+            dialogImageUrl: '',
+            dialogVisible: false,
+            tableData: [],
             schedule: 0,
+            data: [],
+            data2: [],
             ruleForm: {
                 sort: '',
                 name: '',
@@ -186,11 +327,20 @@ export default {
                 goldPrice: '',
                 platinum: '',
                 diamond: '',
-                LadderPrice: [{ number: 0, price: 0 }]
+                LadderPrice: [{ number: 0, price: 0 }],
+                fullReduction: [{ full: 0, price: 0 }],
+                propertyType: '',
+                SpecificationSEC: '11',
+                inputSpecification: '',
+                SpecificationData: [],
+                size: []
             },
             formData: {     //表单请求的数据
                 sortData: [],
-                brand: []
+                brand: [],
+                productAttribute: [],
+                Specification: [],
+                parameter: []
             },
             rules: {
                 sort: [{ trigger: 'blur', required: true, message: '请选择商品分类' }],
@@ -207,6 +357,17 @@ export default {
         this.$api.product.brand().then(res => {
             this.formData.brand = res.data.data.list
         })
+        this.$api.product.productAttribute().then(res => {
+            this.formData.productAttribute = res.data.data.list
+
+        })
+        this.$api.product.subject().then(res => {
+            this.data = res.data.data
+        })
+        this.$api.product.prefrenceArea().then(res => {
+            console.log(res.data.data)
+            this.data2 = res.data.data
+        })
     },
     methods: {
         validate(d) {
@@ -218,30 +379,85 @@ export default {
                 }
             })
         },
-        delTable(d) {
-            if (this.ruleForm.LadderPrice.length == 1) {
+        delTable(d, s) {
+            if (this.ruleForm[s].length == 1) {
 
-            } else { 
-                this.ruleForm.LadderPrice.splice(d, 1)
+            } else {
+                this.ruleForm[s].splice(d, 1)
             }
-            
+
         },
-        addTable() {
-            if (this.ruleForm.LadderPrice.length == 3) {
+        addTable(s) {
+            if (this.ruleForm[s].length == 3) {
                 this.$message({
                     message: '最多只能添加三条',
                     type: 'warning'
                 });
-            } else { 
-                this.ruleForm.LadderPrice.push({ number: 0, price: 0 })
-            }
-            
+            } else {
+                if (s == 'fullReduction') {
+                    this.ruleForm[s].push({ full: 0, price: 0 })
+                } else {
+                    this.ruleForm[s].push({ number: 0, price: 0 })
+                }
 
+            }
+        },
+        addspecification() {
+            this.ruleForm.SpecificationData.push(this.ruleForm.inputSpecification)
+            this.ruleForm.inputSpecification = ''
+        },
+        removesocification(i) {
+            this.ruleForm.SpecificationData.splice(i, 1)
+        },
+        SubmitProduct() {
+            this.$confirm('是否要提交该产品？', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.$api.product.create(this.ruleForm).then(res => { 
+
+                }).catch((err) => { 
+                    console.log(err)
+                    this.$message.error(err.message);
+                })
+            })
         }
     },
+    watch: {
+        'ruleForm.propertyType'(s) {
+            this.$api.product.Specification(s).then(res => {
+                console.log();
+                if (res.data.data.list.length) {
+                    this.formData.Specification = res.data.data.list[1].inputList.split(',')
+                } else {
+                    this.formData.Specification = []
+                }
+
+            })
+            this.$api.product.parameter(s).then(res => {
+                // console.log(res.data.data.list)
+                res.data.data.list.forEach(item => {
+                    item.sec = ''
+                });
+                this.formData.parameter = res.data.data.list
+
+            })
+        }
+    }
 }
 </script>
 <style lang="less" scoped>
+.Specification-box {
+    width: 600px;
+    min-height: 40px;
+    box-sizing: border-box;
+    border: 1px solid #ebeef5;
+    background-color: #f8f9fc;
+    border-radius: 3px;
+    padding: 20px;
+}
+
 .form-btn {
     display: flex;
     justify-content: center;
