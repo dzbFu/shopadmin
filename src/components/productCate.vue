@@ -2,7 +2,7 @@
     <div class="productCate">
         <div class="title-box">
             <div><i class="el-icon-tickets"></i>数据列表</div>
-            <el-button size="small">添加</el-button>
+            <el-button size="small" @click="add">添加</el-button>
         </div>
         <el-table :data="tableData" border style="width: 100%;margin-top:20px;">
             <el-table-column prop="id" label="编号" align="center">
@@ -122,6 +122,9 @@ export default {
                     this.$message.error(err.message);
                 })
             })
+        },
+        add() { 
+            this.$router.push('addProductCate')
         }
 
     },

@@ -1,13 +1,13 @@
 <template>
     <div class="updateProductCate">
-        <el-form :model="formData" size="small" label-position="right" label-width="auto" :rules="rules"
+        <el-form :model="datas" size="small" label-position="right" label-width="auto" :rules="rules"
             ref="ruleForm">
             <el-form-item label="分类名称：" prop="name">
                 <el-input v-model="datas.name"></el-input>
             </el-form-item>
-            <el-form-item label="上级分类：">
+            <el-form-item label="上级分类：" prop="Classification">
                 <el-select v-model="formData.Classification" placeholder="请选择">
-                    <el-option label="无上级分类" :value="0"></el-option>
+                    <el-option label="无上级分类" :value="-1"></el-option>
                     <el-option v-for="(item, index) in Classification" :key="item.id" :label="item.name" :value="index">
                     </el-option>
                 </el-select>
@@ -18,11 +18,11 @@
             <el-form-item label="排序：" prop="sort">
                 <el-input v-model="datas.sort"></el-input>
             </el-form-item>
-            <el-form-item label="是否显示：">
+            <el-form-item label="是否显示：" prop="showStatus">
                 <el-radio v-model="datas.showStatus" :label="1">是</el-radio>
                 <el-radio v-model="datas.showStatus" :label="0">否</el-radio>
             </el-form-item>
-            <el-form-item label="是否显示在导航栏：">
+            <el-form-item label="是否显示在导航栏：" prop="navStatus">
                 <el-radio v-model="datas.navStatus" :label="1">是</el-radio>
                 <el-radio v-model="datas.navStatus" :label="0">否</el-radio>
             </el-form-item>
@@ -40,17 +40,18 @@
                 </div>
                 <el-button type="primary" size="small" style="margin-bottom:20px" @click="add">新增</el-button>
             </el-form-item>
-            <el-form-item label="关键词：">
+            <el-form-item label="关键词：" prop="keywords">
                 <el-input v-model="datas.keywords" placeholder="请输入内容"></el-input>
             </el-form-item>
-            <el-form-item label="分类描述：">
+            <el-form-item label="分类描述：" prop="description">
                 <el-input type="textarea" :rows="1" placeholder="请输入内容" v-model="datas.description">
                 </el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" size="medium" @click="submit">提交</el-button>
+                <el-button size="medium" @click="resetForm('ruleForm')">重置</el-button>
             </el-form-item>
-            
+
         </el-form>
     </div>
 </template>
@@ -58,9 +59,6 @@
 <script>
 export default {
     created() {
-        if (this.$route.query.id) {
-            this.getlist(this.$route.query.id)
-        }
         this.$api.productCate.productCategory(1, 100).then(res => {
             this.Classification = res.data.data.list
         })
@@ -70,12 +68,21 @@ export default {
     },
     data() {
         return {
-            datas: [],
+            datas: {
+                name: '',
+                productUnit: '',
+                sort: '0',
+                navStatus: 0,
+                showStatus: 0,
+                keywords: '',
+                description:''
+                
+            },
             attr: [],
             Attributes: [{ value: '' }],
             Classification: [],
             formData: {
-                Classification: '0'
+                Classification: -1
             },
             rules: {
                 name: [{ required: true, message: '请输入活动名称', trigger: 'blur' }]
@@ -83,11 +90,6 @@ export default {
         }
     },
     methods: {
-        getlist(d) {
-            this.$api.updateProductCate.getlist(d).then(res => {
-                this.datas = res.data.data
-            })
-        },
         add() {
             if (this.Attributes.length == 3) {
                 this.$message({
@@ -101,10 +103,13 @@ export default {
         del(d) {
             this.Attributes.splice(d, 1)
         },
-        submit() { 
-            this.$api.updateProductCate.updataProductCategory(this.$route.query.id).catch(err => { 
+        submit() {
+            this.$api.updateProductCate.updataProductCategory(this.$route.query.id).catch(err => {
                 this.$message.error(err.message);
             })
+        },
+        resetForm(d) { 
+            this.$refs[d].resetFields();
         }
     }
 }
