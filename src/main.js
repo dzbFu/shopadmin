@@ -20,7 +20,7 @@ Vue.config.productionTip = false
 // 使用
 Vue.prototype.$http = axios
 Vue.use(ElementUI);
-// 判断有没有token
+// 判断有没有token 
 router.beforeEach((to,from,next) =>{
   if(to.path  == '/login') return next()
   if(!sessionStorage.token) return next('/login')
