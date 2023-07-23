@@ -35,6 +35,22 @@ const routes = [
       {
         path: 'editproduct',
         component:()=>import('../components/editproduct.vue')
+      },
+      {
+        path: 'updateProductCate',
+        component:()=>import('../components/updateProductCate.vue')
+      },
+      {
+        path: 'addProductCate',
+        component:()=>import('../components/addProductCate.vue')
+      },
+      {
+        path: 'productAttrList',
+        component:()=>import('../components/productAttrList.vue')
+      },
+      {
+        path: 'updateProductAttr',
+        component:()=>import('../components/updateProductAttr.vue')
       }
     ]
   },
